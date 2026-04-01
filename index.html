@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Gravity Flip Run</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-containsave._milestones = [];er">
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- START SCREEN -->
+    <div id="startScreen" class="screen active">
+      <div class="screen-content">
+        <div class="title-block">
+          <div class="title-glow">GRAVITY</div>
+          <div class="title-main">FLIP RUN</div>
+          <div class="title-sub">∞ ENDLESS MODE</div>
+        </div>
+        <div class="instructions-box">
+          <div class="inst-row"><span class="key">SPACE</span> or <span class="key">TAP</span> to flip gravity</div>
+          <div class="inst-row">Avoid obstacles · Collect coins · Survive</div>
+        </div>
+        <button id="playBtn" class="btn btn-primary">▶ PLAY</button>
+        <button id="shopBtn" class="btn btn-secondary">🛒 SHOP</button>
+        <div class="best-score-display">BEST: <span id="startBestScore">0</span></div>
+      </div>
+    </div>
+
+    <!-- GAME HUD -->
+    <div id="gameHUD" class="screen">
+      <div class="hud-top">
+        <div class="hud-item">
+          <div class="hud-label">SCORE</div>
+          <div class="hud-value" id="hudScore">0</div>
+        </div>
+        <button id="pauseBtn" class="btn btn-icon">⏸</button>
+        <div class="hud-item hud-right">
+          <div class="hud-label">COINS</div>
+          <div class="hud-value" id="hudCoins">0</div>
+        </div>
+      </div>
+      <div id="comboDisplay" class="combo-display"></div>
+      <div id="powerupDisplay" class="powerup-display"></div>
+    </div>
+
+    <!-- PAUSE SCREEN -->
+    <div id="pauseScreen" class="screen overlay">
+      <div class="screen-content">
+        <div class="overlay-title">PAUSED</div>
+        <button id="resumeBtn" class="btn btn-primary">▶ RESUME</button>
+        <button id="pauseRestartBtn" class="btn btn-secondary">↺ RESTART</button>
+        <button id="pauseMenuBtn" class="btn btn-ghost">MENU</button>
+      </div>
+    </div>
+
+    <!-- GAME OVER SCREEN -->
+    <div id="gameOverScreen" class="screen overlay">
+      <div class="screen-content">
+        <div class="overlay-title death-title">GAME OVER</div>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-label">SCORE</div>
+            <div class="stat-value" id="finalScore">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">BEST</div>
+            <div class="stat-value" id="finalBest">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">COINS</div>
+            <div class="stat-value" id="finalCoins">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">FLIPS</div>
+            <div class="stat-value" id="finalFlips">0</div>
+          </div>
+        </div>
+        <div id="newBestBadge" class="new-best-badge" style="display:none">🏆 NEW BEST!</div>
+        <button id="restartBtn" class="btn btn-primary">↺ PLAY AGAIN</button>
+        <button id="goShopBtn" class="btn btn-secondary">🛒 SHOP</button>
+        <button id="menuBtn" class="btn btn-ghost">MENU</button>
+      </div>
+    </div>
+
+    <!-- SHOP SCREEN -->
+    <div id="shopScreen" class="screen">
+      <div class="shop-header">
+        <button id="shopBackBtn" class="btn btn-icon">← BACK</button>
+        <div class="shop-title">SHOP</div>
+        <div class="shop-coins">🪙 <span id="shopCoinCount">0</span></div>
+      </div>
+      <div class="shop-tabs">
+        <button class="tab-btn active" data-tab="skins">SKINS</button>
+      </div>
+      <div id="skinGrid" class="skin-grid"></div>
+    </div>
+
+    <!-- ACHIEVEMENT POPUP -->
+    <div id="achievementPopup" class="achievement-popup"></div>
+
+    <!-- FLOATING TEXTS CONTAINER -->
+    <div id="floatingTexts"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
