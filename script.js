@@ -8,25 +8,38 @@ let W = 0,
   H = 0;
 
 function resizeCanvas() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
+  // Use visualViewport for accurate mobile dimensions
+  const viewport = window.visualViewport || {
+    width: window.innerWidth,
+    height: window.innerHeight
+  };
+  
+  W = canvas.width = viewport.width;
+  H = canvas.height = viewport.height;
+  
+  // Ensure minimum playable height
+  if (H < 400) H = Math.max(H, window.innerHeight * 0.9);
 }
 resizeCanvas();
 window.addEventListener("resize", () => {
   resizeCanvas();
   if (state !== STATE.PLAYING) drawIdleBackground();
 });
+window.addEventListener("orientationchange", () => {
+  setTimeout(resizeCanvas, 100);
+});
 
 // ─── CONSTANTS ────────────────────────────────
-const FLOOR_THICK = 32;
-const CEIL_THICK = 32;
+const isMobileDevice = window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const FLOOR_THICK = isMobileDevice ? 24 : 32;
+const CEIL_THICK = isMobileDevice ? 24 : 32;
 const PLAYER_W = 28;
 const PLAYER_H = 28;
 const PLAYER_X = 90;
 const BASE_SPEED = 230;
 const GRAVITY_ACC = 1000;
 const FLIP_IMPULSE = -200;
-const isMobile = window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const isMobile = isMobileDevice;
 const SPAWN_DISTANCE = isMobile ? 220 : 40;
 const SPAWN_COIN_DISTANCE = isMobile ? 180 : 30;
 const SPAWN_POWERUP_DISTANCE = isMobile ? 180 : 30;
