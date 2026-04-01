@@ -31,18 +31,18 @@ window.addEventListener("orientationchange", () => {
 
 // ─── CONSTANTS ────────────────────────────────
 const isMobileDevice = window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-const FLOOR_THICK = isMobileDevice ? 24 : 32;
-const CEIL_THICK = isMobileDevice ? 24 : 32;
+const FLOOR_THICK = isMobileDevice ? 40 : 32;
+const CEIL_THICK = isMobileDevice ? 40 : 32;
 const PLAYER_W = 28;
 const PLAYER_H = 28;
-const PLAYER_X = 90;
-const BASE_SPEED = 230;
+const PLAYER_X = isMobileDevice ? 70 : 90;
+const BASE_SPEED = isMobileDevice ? 190 : 230;
 const GRAVITY_ACC = 1000;
 const FLIP_IMPULSE = -200;
 const isMobile = isMobileDevice;
-const SPAWN_DISTANCE = isMobile ? 220 : 40;
-const SPAWN_COIN_DISTANCE = isMobile ? 180 : 30;
-const SPAWN_POWERUP_DISTANCE = isMobile ? 180 : 30;
+const SPAWN_DISTANCE = isMobile ? 340 : 40;
+const SPAWN_COIN_DISTANCE = isMobile ? 280 : 30;
+const SPAWN_POWERUP_DISTANCE = isMobile ? 280 : 30;
 
 // ─── STATE MACHINE ────────────────────────────
 const STATE = { START: 0, PLAYING: 1, PAUSED: 2, GAMEOVER: 3, SHOP: 4 };
@@ -329,7 +329,7 @@ function spawnObstacle(gameTime, speed) {
 function spawnSpike(onCeiling, speed) {
   const spikeH = 24 + Math.random() * 20;
   const spikeW = 16 + Math.random() * 24;
-  const x = W + 40;
+  const x = W + SPAWN_DISTANCE;
   const y = onCeiling ? CEIL_THICK : H - FLOOR_THICK - spikeH;
   obstacles.push({
     type: "spike",
@@ -347,7 +347,7 @@ function spawnBarrier(speed) {
   const barrierW = 18;
   const playH = H - FLOOR_THICK - CEIL_THICK;
   const gapStart = CEIL_THICK + Math.random() * (playH - gapH);
-  const x = W + 40;
+  const x = W + SPAWN_DISTANCE;
   obstacles.push({
     type: "barrier_seg",
     x,
@@ -391,7 +391,7 @@ function spawnCoin(speed) {
   // Coins sit on floor or ceiling
   const onFloor = Math.random() < 0.5;
   const y = onFloor ? H - FLOOR_THICK - 9 : CEIL_THICK + 9;
-  coins.push({ x: W + 30, y, r: 11.5, speed, collected: false, animT: 0 });
+  coins.push({ x: W + SPAWN_COIN_DISTANCE, y, r: 11.5, speed, collected: false, animT: 0 });
 }
 
 // ─── POWER-UPS ────────────────────────────────
@@ -403,7 +403,7 @@ function spawnPowerup(speed) {
   const y = CEIL_THICK + 30 + Math.random() * (playH - 60);
   const type = POWERUP_TYPES[Math.floor(Math.random() * POWERUP_TYPES.length)];
   powerups.push({
-    x: W + 30,
+    x: W + SPAWN_POWERUP_DISTANCE,
     y,
     r: 15.5,
     speed,
