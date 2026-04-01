@@ -1563,6 +1563,17 @@ canvas.addEventListener("pointerdown", (e) => {
   } else if (state === STATE.PAUSED) resumeGame();
 });
 
+// Fallback for older mobile browsers
+document.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  if (state === STATE.PLAYING) flipGravity();
+  else if (state === STATE.START) startGame();
+  else if (state === STATE.GAMEOVER) {
+    initGame();
+    startGame();
+  } else if (state === STATE.PAUSED) resumeGame();
+}, { passive: false });
+
 // Buttons
 document.getElementById("playBtn").addEventListener("click", startGame);
 document.getElementById("shopBtn").addEventListener("click", showShopScreen);
