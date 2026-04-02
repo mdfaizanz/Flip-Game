@@ -60,15 +60,18 @@ function updateLandscapeOverlay() {
 }
 
 async function lockLandscape() {
+  if (!screen.orientation || !screen.orientation.lock) {
+    // Not supported; use overlay and manual rotation instead.
+    return;
+  }
+
   try {
     if (document.fullscreenEnabled && !document.fullscreenElement) {
       await document.documentElement.requestFullscreen();
     }
-    if (screen.orientation && screen.orientation.lock) {
-      await screen.orientation.lock("landscape");
-    }
+    await screen.orientation.lock("landscape");
   } catch (e) {
-    console.warn("Lock landscape unavailable:", e);
+    // Device/browser may not allow programmatic lock (especially iOS). No console flood.
   }
 }
 
@@ -85,7 +88,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 window.addEventListener("load", () => {
   updateLandscapeOverlay();
-  document.addEventListener("click", lockLandscape);
 });
 
 // ─── CONSTANTS ────────────────────────────────
@@ -1642,8 +1644,8 @@ canvas.addEventListener("pointerdown", (e) => {
   } else if (state === STATE.PAUSED) resumeGame();
 });
 
-// Fallback for older mobile browsers
-document.addEventListener("touchstart", (e) => {
+// Fallback for older mobile browsers on canvas only
+canvas.addEventListener("touchstart", (e) => {
   e.preventDefault();
   if (state === STATE.PLAYING) flipGravity();
   else if (state === STATE.START) startGame();
