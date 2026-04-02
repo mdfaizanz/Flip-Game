@@ -13,20 +13,79 @@ function resizeCanvas() {
     width: window.innerWidth,
     height: window.innerHeight
   };
-  
-  W = canvas.width = viewport.width;
-  H = canvas.height = viewport.height;
-  
-  // Ensure minimum playable height
+
+  W = Math.round(viewport.width);
+  H = Math.round(viewport.height);
+
+  const dpr = window.devicePixelRatio || 1;
+  canvas.style.width = `${W}px`;
+  canvas.style.height = `${H}px`;
+  canvas.width = Math.floor(W * dpr);
+  canvas.height = Math.floor(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
   if (H < 400) H = Math.max(H, window.innerHeight * 0.9);
 }
 resizeCanvas();
 window.addEventListener("resize", () => {
   resizeCanvas();
+  updateLandscapeOverlay();
   if (state !== STATE.PLAYING) drawIdleBackground();
 });
 window.addEventListener("orientationchange", () => {
-  setTimeout(resizeCanvas, 100);
+  setTimeout(() => {
+    resizeCanvas();
+    updateLandscapeOverlay();
+  }, 100);
+});
+
+function isLandscape() {
+  return window.matchMedia("(orientation: landscape)").matches || window.innerWidth > window.innerHeight;
+}
+
+function setRotateOverlay(show) {
+  const el = document.getElementById("rotateOverlay");
+  if (!el) return;
+  if (show) {
+    el.classList.remove("hidden");
+  } else {
+    el.classList.add("hidden");
+  }
+}
+
+function updateLandscapeOverlay() {
+  const show = !isLandscape();
+  setRotateOverlay(show);
+  if (!show && state === STATE.START) drawIdleBackground();
+}
+
+async function lockLandscape() {
+  try {
+    if (document.fullscreenEnabled && !document.fullscreenElement) {
+      await document.documentElement.requestFullscreen();
+    }
+    if (screen.orientation && screen.orientation.lock) {
+      await screen.orientation.lock("landscape");
+    }
+  } catch (e) {
+    console.warn("Lock landscape unavailable:", e);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("rotateRetryBtn").addEventListener("click", () => {
+    if (isLandscape()) {
+      setRotateOverlay(false);
+      startGame();
+    } else {
+      lockLandscape();
+    }
+  });
+});
+
+window.addEventListener("load", () => {
+  updateLandscapeOverlay();
+  document.addEventListener("click", lockLandscape);
 });
 
 // ─── CONSTANTS ────────────────────────────────
@@ -1283,6 +1342,13 @@ function showStartScreen() {
 }
 
 function startGame() {
+  if (!isLandscape()) {
+    setRotateOverlay(true);
+    lockLandscape();
+    return;
+  }
+
+  setRotateOverlay(false);
   initGame();
   state = STATE.PLAYING;
   showScreen("gameHUD");

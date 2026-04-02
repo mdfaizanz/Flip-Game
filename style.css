@@ -996,3 +996,52 @@ html, body {
 @media (max-width: 480px) and (orientation: portrait) {
   #landscape-hint { display: block; }
 }
+
+/* ROTATE DEVICE OVERLAY */
+.rotate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 8, 25, 0.92);
+  color: #ffffff;
+  text-align: center;
+  padding: 20px;
+  pointer-events: all;
+}
+
+.rotate-overlay.hidden {
+  display: none;
+}
+
+.rotate-box {
+  max-width: 360px;
+  padding: 24px 18px;
+  border: 1px solid rgba(0, 212, 255, 0.35);
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.75);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.45);
+}
+
+.rotate-title {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: clamp(18px, 5vw, 24px);
+  color: #00f2ff;
+  margin-bottom: 10px;
+}
+
+.rotate-text {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(13px, 3.8vw, 16px);
+  color: #d0e8ff;
+  margin-bottom: 16px;
+}
+
+#rotateRetryBtn {
+  width: 100%;
+  max-width: 220px;
+  margin: 0 auto;
+}

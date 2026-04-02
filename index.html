@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Gravity Flip Run</title>
@@ -104,8 +104,18 @@
 
     <!-- FLOATING TEXTS CONTAINER -->
     <div id="floatingTexts"></div>
+
+    <!-- ROTATE DEVICE PROMPT -->
+    <div id="rotateOverlay" class="rotate-overlay hidden" aria-live="polite">
+      <div class="rotate-box">
+        <div class="rotate-title">Rotate to Landscape</div>
+        <div class="rotate-text">For best gameplay, please rotate your phone to landscape.</div>
+        <button id="rotateRetryBtn" class="btn btn-primary">I rotated, continue</button>
+      </div>
+    </div>
   </div>
 
+  <!-- Optional: lock landscape is handled in script.js -->
   <script src="script.js"></script>
 </body>
 </html>
