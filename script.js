@@ -1645,7 +1645,11 @@ canvas.addEventListener("pointerdown", (e) => {
 });
 
 // Fallback for older mobile browsers on canvas only
-canvas.addEventListener("touchstart", (e) => {
+document.addEventListener("touchstart", (e) => {
+  // Prevent game actions if touching a button or interactive element
+  if (e.target.closest('button') || e.target.closest('.btn') || e.target.closest('input') || e.target.closest('select')) {
+    return; // Let the button handle it
+  }
   e.preventDefault();
   if (state === STATE.PLAYING) flipGravity();
   else if (state === STATE.START) startGame();
