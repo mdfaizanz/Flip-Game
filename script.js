@@ -1275,10 +1275,10 @@ function updateHUD() {
 }
 
 const POWERUP_DURATION = {
-  shield: 15,
+  shield: 8,
   slow: 5,
   double: 15,
-  magnetic: 15,
+  magnetic: 10,
 };
 
 function updatePowerupDisplay() {
