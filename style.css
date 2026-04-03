@@ -552,7 +552,7 @@ html, body {
 .powerup-bar-fill {
   width: 0;
   height: 100%;
-  border-radius: 3px;
+  border-radius: 2.9px;
   transition: width 0.1s linear;
 }
 
