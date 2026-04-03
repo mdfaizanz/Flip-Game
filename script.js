@@ -455,9 +455,9 @@ function spawnCoin(speed) {
   coins.push({ x: W + SPAWN_COIN_DISTANCE, y, r: 11.5, speed, collected: false, animT: 0 });
 }
 
-// ─── POWER-UPS ────────────────────────────────
+// ─── -UPS ────────────────────────────────
 let powerups = [];
-const POWERUP_TYPES = ["shield", "slow", "double"];
+const POWERUP_TYPES = ["shield", "slow", "double", "magnetic"];
 
 function spawnPowerup(speed) {
   const playH = H - FLOOR_THICK - CEIL_THICK;
@@ -889,8 +889,9 @@ const POWERUP_COLORS = {
   shield: "#00e5ff",
   slow: "#bf5fff",
   double: "#ffe600",
+  magnetic: "#ff4444"
 };
-const POWERUP_ICONS = { shield: "🛡", slow: "⏱", double: "×2" };
+const POWERUP_ICONS = { shield: "🛡", slow: "⏱", double: "×2", magnetic: "🧲"};
 
 function drawPowerup(p) {
   p.animT += 0.04;
@@ -1006,6 +1007,12 @@ function update(dt) {
       delete activePowerups.double;
     }
   }
+  if (activePowerups.magnetic) {
+    activePowerups.magnetic -= dt;
+    if (activePowerups.magnetic <= 0) {
+      delete activePowerups.magnetic;
+    }
+  }
 
   // Player physics
   if (player.flipCooldown > 0) player.flipCooldown -= dt;
@@ -1065,19 +1072,42 @@ function update(dt) {
   for (let i = coins.length - 1; i >= 0; i--) {
     const c = coins[i];
     c.x -= c.speed * slowDt;
-     // Magnetic attraction when powerup active
+
+    // Magnetic attraction when powerup active (full 2D radius)
     if (activePowerups.magnetic) {
-      const playerOnFloor = player.gravDir === 1;
-      const coinOnFloor   = c.y > H / 2;
-      if (playerOnFloor === coinOnFloor) {
-        const dx = (player.x + PLAYER_W / 2) - c.x;
-        const dist = Math.abs(dx);
-        if (dist < 240) {
-          c.x += (dx / dist) * Math.min(dist * 0.08, 5);
+      const magnetRadius = 400;
+      const px = player.x + PLAYER_W / 2;
+      const py = player.y + PLAYER_H / 2;
+      const dx = px - c.x;
+      const dy = py - c.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist > 0 && dist < magnetRadius) {
+        // stronger pull when closer
+        const pullPower = (1 - dist / magnetRadius);
+        const strength = 3.7 * pullPower + 0.15;
+
+        const moveX = dx * strength * slowDt;
+        const moveY = dy * strength * slowDt;
+
+        const nextDx = dx - moveX;
+        const nextDy = dy - moveY;
+        const nextDist = Math.sqrt(nextDx * nextDx + nextDy * nextDy);
+
+        const minDistance = Math.max(PLAYER_W, PLAYER_H) / 2 + c.r;
+
+        if (nextDist <= minDistance) {
+          // stick at edge but not inside player
+          c.x = px - (dx / dist) * minDistance;
+          c.y = py - (dy / dist) * minDistance;
+        } else {
+          c.x += moveX;
+          c.y += moveY;
         }
       }
     }
-    if (c.x < -30) {
+
+    if (c.x < -30 || c.y < -30 || c.y > H + 30) {
       coins.splice(i, 1);
       continue;
     }
@@ -1244,13 +1274,37 @@ function updateHUD() {
   document.getElementById("hudCoins").textContent = sessionCoins;
 }
 
+const POWERUP_DURATION = {
+  shield: 8,
+  slow: 5,
+  double: 15,
+  magnetic: 10,
+};
+
 function updatePowerupDisplay() {
   const el = document.getElementById("powerupDisplay");
   el.innerHTML = "";
   for (const [type, t] of Object.entries(activePowerups)) {
+    const maxTime = POWERUP_DURATION[type] || 10;
+    const pct = Math.max(0, Math.min(100, (t / maxTime) * 100));
+
     const div = document.createElement("div");
     div.className = `powerup-icon ${type}`;
-    div.textContent = `${POWERUP_ICONS[type]} ${Math.ceil(t)}s`;
+
+    const label = document.createElement("div");
+    label.className = "label";
+    label.textContent = `${POWERUP_ICONS[type]}`;
+    div.appendChild(label);
+
+    const barWrap = document.createElement("div");
+    barWrap.className = "powerup-bar-wrap";
+    const barFill = document.createElement("div");
+    barFill.className = "powerup-bar-fill";
+    barFill.style.width = `${pct}%`;
+    barFill.style.background = `linear-gradient(90deg, rgba(255,255,255,0.95), rgba(255,255,255,0.45))`;
+
+    barWrap.appendChild(barFill);
+    div.appendChild(barWrap);
     el.appendChild(div);
   }
 }
