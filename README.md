@@ -5,6 +5,11 @@ Jump, flip, dodge obstacles, and collect coins while the speed keeps increasing.
 
 ---
 
+## 🌐 Live Demo
+👉 https://mdfaizanz.github.io/Flip-Game/
+
+---
+
 ## 🎮 Features
 
 - Smooth and responsive endless runner gameplay  
