@@ -1409,18 +1409,21 @@ function startGame() {
   state = STATE.PLAYING;
   showScreen("gameHUD");
   document.getElementById("gameHUD").classList.add("active");
+  if (typeof CrazyGames !== 'undefined') CrazyGames.SDK.game.gameplayStart();
 }
 
 function pauseGame() {
   if (state !== STATE.PLAYING) return;
   state = STATE.PAUSED;
   showScreen("pauseScreen");
+  if (typeof CrazyGames !== 'undefined') CrazyGames.SDK.game.gameplayStop();
 }
 
 function resumeGame() {
   state = STATE.PLAYING;
   showScreen("gameHUD");
   lastTimestamp = null;
+  if (typeof CrazyGames !== 'undefined') CrazyGames.SDK.game.gameplayStart();
 }
 
 function showGameOver() {
@@ -1433,6 +1436,15 @@ function showGameOver() {
   state = STATE.GAMEOVER;
   showScreen("gameOverScreen");
   document.getElementById("gameHUD").classList.remove("active");
+
+  if (typeof CrazyGames !== 'undefined') {
+    CrazyGames.SDK.game.gameplayStop();
+    CrazyGames.SDK.ad.requestAd('midgame', {
+      adStarted:  () => { soundEnabled = false; },
+      adFinished: () => { soundEnabled = true;  },
+      adError:    () => { soundEnabled = true;  }
+    });
+  }
 }
 
 function showShopScreen() {
@@ -1738,6 +1750,7 @@ document
 // ─── BOOT ─────────────────────────────────────
 showStartScreen();
 requestAnimationFrame(gameLoop);
+if (typeof CrazyGames !== 'undefined') CrazyGames.SDK.init();
 
 
 function checkMilestones() {
